@@ -1,0 +1,10 @@
+ext {
+    dependencies = [
+            mylibrary1 = [
+                    isLocal : true,    // 是否本地依赖
+                    projectPath : "./mylibrary1",   // 项目的路径
+                    projectName : ":",          // 项目名称
+                    projectMaven : "com.example:mylibrary1"      // 项目的maven地址
+            ]
+    ]
+}

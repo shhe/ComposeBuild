@@ -1,0 +1,8 @@
+ext {
+    relsese = [
+            'mylibrary1': '0.0.1'
+    ]
+    snapshot = [
+            'mylibrary1': '0.0.1-SNAPSHOT'
+    ]
+}

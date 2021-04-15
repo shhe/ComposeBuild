@@ -1,0 +1,3 @@
+include ':mylibrary1'
+project(':mylibrary1').projectDir = new File("mylibrary1")
+rootProject.name = "mylibrary1"

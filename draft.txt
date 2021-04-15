@@ -1,0 +1,1 @@
+./gradlew :mylibrary1:mylibrary1:uploadArchives --info -PIS_DEBUG=true

@@ -1,0 +1,76 @@
+apply from: "../gradle_module_aar_versions.gradle"
+apply plugin: 'maven'
+
+//group = GROUP
+//group = 'com.example'
+
+def getModuleVersion() {
+    if (project.hasProperty('IS_RELEASE') && IS_RELEASE.toBoolean()) {
+        return rootProject.ext.relsese."${project.name}"
+    } else {
+        return rootProject.ext.snapshot."${project.name}"
+    }
+}
+
+def getPropertyFromLocalProperties(key) {
+    File file = project.rootProject.file('local.properties');
+    if (file.exists()) {
+        Properties properties = new Properties()
+        properties.load(file.newDataInputStream())
+        return properties.getProperty(key)
+    }
+}
+
+def getRepositoryUrl() {
+    if (isDebug()) {
+        return uri("../repo")
+    }
+    return isSnapshot() ? getPropertyFromLocalProperties("SNAPSHOT_REPOSITORY_URL") : getPropertyFromLocalProperties("RELEASE_REPOSITORY_URL")
+}
+
+def getGroupId() {
+    return "com.example"
+}
+
+def isDebug() {
+    if (project.hasProperty('IS_DEBUG') && IS_DEBUG.toBoolean()) {
+        return true;
+    }
+    return true;
+}
+
+def isSnapshot() {
+    return getModuleVersion().endsWith("SNAPSHOT");
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: repositoryUrl) {
+            authentication(userName: getPropertyFromLocalProperties("MVN_USER"), password: getPropertyFromLocalProperties("MVN_PASSWORD"))
+        }
+        pom.project {
+            groupId getGroupId()
+            artifactId project.name
+            version getModuleVersion()
+        }
+    }
+}
+
+// 源代码一起打包
+task androidSourcesJar(type: Jar) {
+    if (project.hasProperty('android')) {
+        classifier = 'sources'
+        from project.android.sourceSets.main.java.sourceFiles
+    }
+}
+
+artifacts {
+    if (project.hasProperty('android')) {
+        archives androidSourcesJar
+    }
+}
+
+task taskUpload {
+    println project.name + " " + getModuleVersion()
+}
